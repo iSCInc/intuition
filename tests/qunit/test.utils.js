@@ -26,22 +26,25 @@ QUnit.intuitionModule = function (name, intuition) {
 			.onCall(3).returns(null);
 
 		intuition.load('example').done(function () {
-			assert.equal(intuition.msg('example', 'foo'), 'Foo value');
+			assert.equal(intuition.msg('example', 'foo'), 'Foo value', 'Normal fetch');
 		});
+		this.clock.tick(200);
 
 		intuition.load('wee-data').fail(function () {
 			assert.ok(true, 'Invalid data yields error');
 		});
+		this.clock.tick(200);
 
 		intuition.load('wee-ajax').fail(function () {
-			assert.ok(true, 'AJAX failure propagates');
+			assert.ok(true, 'Ajax failure is forwarded to load() promise');
 		});
+		this.clock.tick(200);
 
 		intuition.load('example').done(function () {
-			assert.equal(intuition.msg('example', 'foo'), 'Foo value');
+			assert.equal(intuition.msg('example', 'foo'), 'Foo value', 'Cache hit');
 		});
 
-		this.clock.tick(100);
+		this.clock.tick(10);
 	});
 
 	QUnit.test('load( Array )', function (assert) {
@@ -56,5 +59,7 @@ QUnit.intuitionModule = function (name, intuition) {
 			assert.equal(intuition.msg('one', 'bar'), 'Bar value');
 			assert.equal(intuition.msg('two', 'quux'), 'Quux value');
 		});
+
+		this.clock.tick(200);
 	});
 };
